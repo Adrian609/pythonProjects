@@ -1,3 +1,9 @@
+# Globals
+MIN_SIZE = 3
+MAX_SIZE = 15
+
+
+# Methods
 def get_square():
     num = get_size()
     square = ''
@@ -7,8 +13,16 @@ def get_square():
 
 
 def get_size():
-    size = int(input('Please enter a size between 3 and 15: '))
-    return size
+    is_valid_input = False
+    while not is_valid_input:
+        try:
+            size = int(input('Please enter a size between 3 and 15: '))
+            if MAX_SIZE >= size >= MIN_SIZE:
+                return size
+            else:
+                print('Please enter a number between 3 and 15')
+        except ValueError:
+            print("Please enter a valid integer.")
 
 
 def get_box():
@@ -48,7 +62,7 @@ def get_checker_board():
 def get_help():
     return "acceptable commands: help, quit, square, box, diagonaldown, diagonalup, checkerboard"
 
-
+#Main
 def main():
     user_prompts = {
         'help': get_help,
