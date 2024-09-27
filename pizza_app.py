@@ -21,20 +21,49 @@ topping_prices = {
 
 subtotal = 0.0
 count = 0
+
+def get_pizza_size():
+    while True:
+        size = input('What size pizza would you like? (Small, Medium, Large): ').strip().lower()
+        size = size[0]  # Take the first letter for consistency ('s', 'm', 'l')
+        if size in ('s', 'm', 'l'):
+            return size
+        else:
+            print("Invalid size. Please enter Small, Medium, or Large.")
+
+def get_num_toppings():
+    while True:
+        num = input("How many toppings would you like? ").strip()
+        if num.isdigit():
+            return int(num)
+        else:
+            print("Please enter a valid number of toppings.")
+
+def wants_extra_sauce():
+    while True:
+        sauce = input('Would you like extra sauce for $0.50? (Y/N): ').strip().lower()
+        if sauce in ('y', 'yes'):
+            return True
+        elif sauce in ('n', 'no'):
+            return False
+        else:
+            print("Please enter 'Y' or 'N'.")
+
+
 number_pizzas = int(input("How many pizzas? ").strip())
 
 while number_pizzas > 0:
     count += 1
     print(f'Pizza Order: {count}')
-    size_pizza = input('What size pizza would you like? (Small, Medium, Large):').strip().lower()
-    num_toppings = int(input("How many toppings would you like?").strip())
-    extra_sauce = input('Would you like extra sauce for $0.50? (Y/N)').strip().lower()
+    size_pizza = get_pizza_size()
+    num_toppings = get_num_toppings()
+    extra_sauce = wants_extra_sauce()
     temp_total = pizza_prices[size_pizza] + topping_prices[size_pizza] * num_toppings
     subtotal += temp_total
 
     order_description = f'A {size_pizza.capitalize()} pizza with {num_toppings} toppings'
 
-    if extra_sauce in ('yes' or 'y'):
+    if extra_sauce:
         temp_total += EXTRA_SAUCE_COST
         subtotal += EXTRA_SAUCE_COST
         order_description += f' and extra sauce'
