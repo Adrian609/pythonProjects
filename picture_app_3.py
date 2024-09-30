@@ -22,9 +22,9 @@ def get_size(min_size, max_size):
             if max_size >= size >= min_size:
                 return size
             else:
-                print('Please enter a number between 3 and 15')
+                print(f'You entered \"{size}\". Please enter a number between {min_size} and {max_size}')
         except ValueError:
-            print("Please enter a valid integer.")
+            print(f'Please enter a number between {min_size} and {max_size}')
 
 
 def get_box():
