@@ -1,3 +1,6 @@
+import unittest
+from unittest.mock import patch
+
 # Globals
 MIN_SIZE = 3
 MAX_SIZE = 15
@@ -31,10 +34,10 @@ def get_box():
     num = get_size(MIN_SIZE, MAX_SIZE)
     box = ''
     for i in range(num + 1):
-        if 1 < i < num:
-            box += '*   *\n'
-        elif i == num or 0 == i:
+        if i == 0 or i == num:
             box += '*****\n'
+        else:
+            box += '*   *\n'
     return box
 
 
@@ -97,3 +100,49 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+class TestShapesApp(unittest.TestCase):
+
+    @patch('builtins.input', side_effect=['5'])
+    def test_get_square(self, mock_input):
+        expected_output = '*****\n*****\n*****\n*****\n*****\n'
+        self.assertEqual(get_square(), expected_output)
+
+    @patch('builtins.input', side_effect=['5'])
+    def test_get_box(self, mock_input):
+        expected_output = '*****\n*   *\n*   *\n*   *\n*   *\n*****\n'
+        self.assertEqual(get_box(), expected_output)
+
+    @patch('builtins.input', side_effect=['5'])
+    def test_get_diagonal_down(self, mock_input):
+        expected_output = '*\n *\n  *\n   *\n    *\n'
+        self.assertEqual(get_diagonal_down(), expected_output)
+
+    @patch('builtins.input', side_effect=['5'])
+    def test_get_diagonal_up(self, mock_input):
+        expected_output = '    *\n   *\n  *\n *\n*\n'
+        self.assertEqual(get_diagonal_up(), expected_output)
+
+    @patch('builtins.input', side_effect=['7'])
+    def test_get_checker_board(self, mock_input):
+        expected_output = '* * * * * * *\n * * * * * * \n* * * * * * *\n * * * * * * \n* * * * * * *\n * * * * * * \n* * * * * * *\n'
+        self.assertEqual(get_checker_board(), expected_output)
+
+    def test_get_help(self):
+        expected_output = "acceptable commands: help, quit, square, box, diagonaldown, diagonalup, checkerboard"
+        self.assertEqual(get_help(), expected_output)
+
+    @patch('builtins.input', side_effect=['20', '5'])
+    def test_get_size_out_of_bounds_high(self, mock_input):
+        with self.assertRaises(ValueError):
+            get_size(MIN_SIZE, MAX_SIZE)
+
+    @patch('builtins.input', side_effect=['1', '2', '3'])
+    def test_get_size_out_of_bounds_low(self, mock_input):
+        result = get_size(MIN_SIZE, MAX_SIZE)
+        self.assertEqual(result, 3)
+
+
+if __name__ == '__main__':
+    unittest.main()
