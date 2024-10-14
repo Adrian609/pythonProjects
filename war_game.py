@@ -2,7 +2,7 @@ import random
 
 
 def build_deck():
-    suits = ['H', 'D', 'C', 'S']  # Hearts, Diamonds, Clubs, Spades
+    suits = ["H", "D", "C", "S"]  # Hearts, Diamonds, Clubs, Spades
     values = list(range(2, 15))  # 2-10, J, Q, K, A (where A=14)
     card_deck = [(value, suit) for suit in suits for value in values]
     random.shuffle(card_deck)
@@ -41,12 +41,25 @@ def play_hand(hand1, hand2):
 
 
 def play_hands(player_one, player_two):
+    hand_count = 0
     while len(player_one) != 0 and len(player_two) != 0:
         play_hand(player_one, player_two)
+        hand_count += 1
         if len(player_one) == 0:
-            return "player one lost"
+            return hand_count, "player one lost"
         if len(player_two) == 0:
-            return "player two lost"
+            return hand_count, "player two lost"
+
+
+def simulate_games(num_simulations):
+    total_hands = 0
+    for _ in range(num_simulations):
+        deck = build_deck()
+        player_one, player_two = build_hand(deck)
+        hand_count, _ = play_hands(player_one, player_two)
+        total_hands += hand_count
+    average_hands = total_hands / num_simulations
+    print(f"Average number of hands per game: {average_hands}")
 
 
 def draw(hand1, hand2, common_pool):
@@ -82,9 +95,12 @@ def check_winner(card1, card2):
 deck = build_deck()
 player_one, player_two = build_hand(deck)
 
-print(play_hands(player_one, player_two))
-print(f'player1: {len(player_one)}')
-print(f'Player2: {len(player_two)}')
+# print(play_hands(player_one, player_two))
+# print(f"player1: {len(player_one)}")
+# print(f"Player2: {len(player_two)}")
+
+num_simulations = int(input("How many simulations would you like to play? "))
+simulate_games(num_simulations)
 
 
 # Test functions
@@ -102,7 +118,7 @@ def test_build_deck():
     unique_cards = set(deck)
     assert len(unique_cards) == 52, "Test failed: Deck contains duplicate cards."
     expected_values = set(range(2, 15))  # 2 through 14 (Aces are 14)
-    expected_suits = {'H', 'D', 'C', 'S'}
+    expected_suits = {"H", "D", "C", "S"}
     deck_values = {card[0] for card in deck}
     deck_suits = {card[1] for card in deck}
     assert deck_values == expected_values, "Test failed: Deck has incorrect values."
