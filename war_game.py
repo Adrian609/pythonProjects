@@ -95,10 +95,6 @@ def check_winner(card1, card2):
 deck = build_deck()
 player_one, player_two = build_hand(deck)
 
-# print(play_hands(player_one, player_two))
-# print(f"player1: {len(player_one)}")
-# print(f"Player2: {len(player_two)}")
-
 num_simulations = int(input("How many simulations would you like to play? "))
 simulate_games(num_simulations)
 
@@ -126,6 +122,16 @@ def test_build_deck():
     print("All tests passed for build_deck function.")
 
 
+def test_play_hand():
+    player1 = [(14, "H")]  # Ace of Hearts
+    player2 = [(13, "S")]  # King of Spades
+    play_hand(player1, player2)
+    assert len(player1) == 2, "Test failed: Player 1 should have 2 cards"
+    assert len(player2) == 0, "Test failed: Player 2 should have 0 cards"
+    print("All tests passed for play_hand function.")
+
+
 # Run test cases
 test_check_winner()
 test_build_deck()
+test_play_hand()
