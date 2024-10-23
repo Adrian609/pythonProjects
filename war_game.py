@@ -20,6 +20,9 @@ def build_hand(card_deck):
 
 def play_hand(hand1, hand2):
     """Plays a single hand and adds cards to the winner's deck."""
+    if not hand1 or not hand2:
+        return 0  # If any player has no cards, no hand is played.
+
     common_pool = [hand1.pop(0), hand2.pop(0)]
     winner = check_winner(common_pool[0], common_pool[1])
 
@@ -30,7 +33,7 @@ def play_hand(hand1, hand2):
         random.shuffle(common_pool)
         hand2.extend(common_pool)
     else:
-        # Invoke draw() to handle the tie scenario
+        # Handle the war scenario (tie)
         winner = draw(hand1, hand2, common_pool)
         if winner == 1:
             random.shuffle(common_pool)
@@ -41,62 +44,72 @@ def play_hand(hand1, hand2):
 
 
 def play_hands(player_one, player_two):
+    """Simulates the game until one player wins or the game draws."""
     hand_count = 0
-    while len(player_one) != 0 and len(player_two) != 0:
+    while player_one and player_two:
         play_hand(player_one, player_two)
         hand_count += 1
-        if len(player_one) == 0:
-            return hand_count, "player one lost"
-        if len(player_two) == 0:
-            return hand_count, "player two lost"
+
+    if not player_one and not player_two:
+        return hand_count, "draw"
+    elif not player_one:
+        return hand_count, "player one lost"
+    elif not player_two:
+        return hand_count, "player two lost"
 
 
 def simulate_games(num_simulations):
+    """Simulates multiple games and calculates the average number of hands."""
     total_hands = 0
+    player_one_wins = 0
+    player_two_wins = 0
+    draws = 0
+
     for _ in range(num_simulations):
         deck = build_deck()
         player_one, player_two = build_hand(deck)
-        hand_count, _ = play_hands(player_one, player_two)
+        hand_count, result = play_hands(player_one, player_two)
         total_hands += hand_count
+
+        if result == "player one lost":
+            player_two_wins += 1
+        elif result == "player two lost":
+            player_one_wins += 1
+        else:
+            draws += 1
+
     average_hands = total_hands / num_simulations
     print(f"Average number of hands per game: {average_hands}")
+    print(f"Player 1 wins: {player_one_wins}")
+    print(f"Player 2 wins: {player_two_wins}")
+    print(f"Draws: {draws}")
 
 
 def draw(hand1, hand2, common_pool):
     """Handles the draw scenario, adding more cards to the common pool until a winner is determined."""
     while True:
-        # Check if both players have enough cards for a war (minimum 2 cards)
         if len(hand1) < 2:
-            return 2  # Player 1 loses as they can't continue the draw
+            return 2  # Player 1 loses as they can't continue the war
         elif len(hand2) < 2:
-            return 1  # Player 2 loses as they can't continue the draw
+            return 1  # Player 2 loses as they can't continue the war
 
-        # Add one card face-down and one card face-up from each player
+        # Each player adds one card face-down and one card face-up
         common_pool.extend([hand1.pop(0), hand2.pop(0)])  # Face-down cards
         common_pool.extend([hand1.pop(0), hand2.pop(0)])  # Face-up cards
 
-        # Check the face-up cards and determine the winner
-        face_up_card1 = common_pool[-2]
-        face_up_card2 = common_pool[-1]
-        winner = check_winner(face_up_card1, face_up_card2)
-
-        if winner != 0:  # Break the loop if there is a winner
+        # Check the face-up cards
+        winner = check_winner(common_pool[-2], common_pool[-1])
+        if winner != 0:
             return winner
 
 
 def check_winner(card1, card2):
+    """Determines the winner based on the card values."""
     if card1[0] > card2[0]:
         return 1
     elif card1[0] < card2[0]:
         return 2
-    return 0  # tie
-
-
-deck = build_deck()
-player_one, player_two = build_hand(deck)
-
-num_simulations = int(input("How many simulations would you like to play? "))
-simulate_games(num_simulations)
+    return 0  # Tie
 
 
 # Test functions
@@ -109,6 +122,7 @@ def test_check_winner():
 
 
 def test_build_deck():
+    """Tests the build_deck function."""
     deck = build_deck()
     assert len(deck) == 52
     unique_cards = set(deck)
@@ -123,6 +137,7 @@ def test_build_deck():
 
 
 def test_play_hand():
+    """Tests the play_hand function."""
     player1 = [(14, "H")]  # Ace of Hearts
     player2 = [(13, "S")]  # King of Spades
     play_hand(player1, player2)
@@ -135,3 +150,8 @@ def test_play_hand():
 test_check_winner()
 test_build_deck()
 test_play_hand()
+
+
+# Simulate games
+num_simulations = int(input("How many simulations would you like to play? "))
+simulate_games(num_simulations)
