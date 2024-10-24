@@ -1,0 +1,102 @@
+﻿/ Program 1: Compare user input with threshold and output BEEF or FEED
+ORG 100
+Input           / Read a value from the user
+Store UserInput / Store it in UserInput
+
+Load UserInput  / Load the input value
+Subt Threshold  / Subtract 110 (decimal) from the input
+Skipcond 800    / If input >= 110, skip the next instruction
+Jump PrintFEED  / If input < 110, jump to print FEED
+
+PrintBEEF, Load BEEF  / Load BEEF (hex)
+Output               / Output the value
+Jump End             / End the program
+
+PrintFEED, Load FEED  / Load FEED (hex)
+Output               / Output the value
+
+End, Halt            / Stop the program
+
+UserInput, DEC 0     / Memory location for user input
+Threshold, DEC 109   / Constant threshold value (110 in decimal)
+BEEF, HEX BEEF       / Constant BEEF (hex value)
+FEED, HEX FEED       / Constant FEED (hex value)
+
+/Program 2 added output to track increments
+ORG 100
+Input              / Read the value from the user
+Store UserInput    / Store the input in memory
+
+Load UserInput
+Skipcond 800       / Skip if input >= 0
+Jump NegativeLoop  / Jump to NegativeLoop if input < 0
+Jump Positive      / Otherwise, jump to Positive
+
+NegativeLoop, Load UserInput    / Start negative loop
+Add One                         / Add 1 to the number
+Store UserInput                 / Store the result back
+Output                          / Output the current value (for tracking)
+Load UserInput
+Skipcond 000                    / If input >= 0, break the loop
+Jump NegativeLoop               / Otherwise, repeat the loop
+
+Positive, Load UserInput        / Start positive branch
+PositiveLoop, Load UserInput    / Load UserInput at the start of the loop
+Subt Fifty                      / Subtract 50 to compare against 50
+Skipcond 000                    / If input > 50 (Skip if number is greater than 50)
+Jump End                        / If the number is greater than 50, terminate
+Load UserInput                  / Load UserInput again before modifying
+Add Two                         / Add 2 to the number
+Store UserInput                 / Store the result back
+Output                          / Output the current value (for tracking)
+Jump PositiveLoop               / Repeat the positive loop
+
+End, Halt                       / Stop the program
+
+UserInput, DEC 0                / Memory location for user input
+One, DEC 1                      / Constant 1
+Two, DEC 2                      / Constant 2
+Fifty, DEC 50                   / Constant 50
+
+
+/ Program 3: tested with 10 and 3
+ORG 100
+Clear
+Store Quotient      / Initialize Quotient to 0 for a fresh start
+
+Input               / Read the Dividend (numerator)
+Store Dividend      / Store it in Dividend
+
+Input               / Read the Divisor (denominator)
+Store Divisor       / Store it in Divisor
+SkipCond 800        / Check if Divisor > 0
+Halt                / Halt if Divisor <= 0 (to avoid division by zero)
+
+StartDivision, Load Dividend
+Subt Divisor        / Subtract Divisor from Dividend
+SkipCond 800        / If Dividend >= 0, continue the division loop
+Jump FinishDivision / If Dividend < 0, stop the loop and output results
+
+Store Dividend      / Store the new value of Dividend (remainder after subtraction)
+Load Quotient
+Add One             / Increment Quotient by 1
+Store Quotient      / Store the updated Quotient
+Jump StartDivision  / Repeat the loop
+
+FinishDivision, Load Dividend    / At this point, Dividend holds the remainder (no need to adjust)
+Store Remainder                   / Store the remainder
+
+/ Output the quotient and remainder
+Load Quotient
+Output              / Output Quotient
+
+Load Remainder
+Output              / Output Remainder
+
+Halt                / End the program
+
+Dividend, DEC 0     / Memory space for Dividend (numerator)
+Divisor, DEC 0      / Memory space for Divisor (denominator)
+Quotient, DEC 0     / Memory space for Quotient (result of division)
+Remainder, DEC 0    / Memory space for the remainder after division
+One, DEC 1          / Constant 1 used for incrementing quotient
