@@ -4,8 +4,8 @@ Input           / Read a value from the user
 Store UserInput / Store it in UserInput
 
 Load UserInput  / Load the input value
-Subt Threshold  / Subtract 110 (decimal) from the input
-Skipcond 800    / If input >= 110, skip the next instruction
+Subt Threshold  / Subtract 109 (decimal) from the input
+Skipcond 800    / If input > 109, skip the next instruction
 Jump PrintFEED  / If input < 110, jump to print FEED
 
 PrintBEEF, Load BEEF  / Load BEEF (hex)
@@ -18,7 +18,7 @@ Output               / Output the value
 End, Halt            / Stop the program
 
 UserInput, DEC 0     / Memory location for user input
-Threshold, DEC 109   / Constant threshold value (110 in decimal)
+Threshold, DEC 109   / Constant threshold value (109 in decimal)
 BEEF, HEX BEEF       / Constant BEEF (hex value)
 FEED, HEX FEED       / Constant FEED (hex value)
 
