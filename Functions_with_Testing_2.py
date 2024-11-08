@@ -260,6 +260,53 @@ def test_zigzag():
     assert zigzag(input_string, k) != expected_output, "Test Case 5 Failed"
 
 
+def test_generate_primes():
+    """
+    Test cases for the generate_primes function.
+    """
+    # Test Case 1: n_max = 0 (should return an empty list)
+    n_max = 0
+    expected_output = []
+    assert (
+        generate_primes(n_max) == expected_output
+    ), f"Test Case 1 Failed: n_max = {n_max}"
+
+    # Test Case 2: n_max = 1 (should return an empty list)
+    n_max = 1
+    expected_output = []
+    assert (
+        generate_primes(n_max) == expected_output
+    ), f"Test Case 2 Failed: n_max = {n_max}"
+
+    # Test Case 3: n_max = 2 (should return [2])
+    n_max = 2
+    expected_output = [2]
+    assert (
+        generate_primes(n_max) == expected_output
+    ), f"Test Case 3 Failed: n_max = {n_max}"
+
+    # Test Case 4: n_max = 10 (should return [2, 3, 5, 7])
+    n_max = 10
+    expected_output = [2, 3, 5, 7]
+    assert (
+        generate_primes(n_max) == expected_output
+    ), f"Test Case 4 Failed: n_max = {n_max}"
+
+    # Test Case 5: n_max = 29 (should include 29 in the list of primes)
+    n_max = 29
+    expected_output = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
+    assert (
+        generate_primes(n_max) == expected_output
+    ), f"Test Case 5 Failed: n_max = {n_max}"
+
+    # Test Case 6: n_max = 50 (checking length and content)
+    n_max = 50
+    expected_output = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]
+    assert (
+        generate_primes(n_max) == expected_output
+    ), f"Test Case 6 Failed: n_max = {n_max}"
+
+
 if __name__ == "__main__":
     strs = ["eat", "tea", "tan", "ate", "nat", "bat"]
     strs_2 = ["eat", "tea", "tea", "ate", "tea", "eat"]
