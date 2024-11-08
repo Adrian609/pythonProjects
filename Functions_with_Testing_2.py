@@ -308,13 +308,9 @@ def test_generate_primes():
 
 
 if __name__ == "__main__":
-    strs = ["eat", "tea", "tan", "ate", "nat", "bat"]
-    strs_2 = ["eat", "tea", "tea", "ate", "tea", "eat"]
-    input_string = "ZigZagString"
-    k = 3
-
     test_is_prime()
     test_is_anagram_set()
     test_is_anagram()
     test_is_palindrome()
     test_zigzag()
+    test_generate_primes()
