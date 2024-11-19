@@ -6,26 +6,12 @@ from unittest.mock import patch
 
 
 def mask_word(word, guessed):
-    """
-    Masks the word by replacing unguessed letters with hyphens.
-    Args:
-        word (str): the word to mask
-        guessed (set): the guessed letters
-    Returns:
-        str: the masked word
-    """
+    """Mask the word by replacing unguessed letters with hyphens."""
     return "".join(letter if letter in guessed else "-" for letter in word)
 
 
 def partition(words, guessed):
-    """
-    Partition the set of words based on the guessed letters.
-    Args:
-        words (set): the word set
-        guessed (set): the guessed letters
-    Returns:
-        dict: The partitions
-    """
+    """Partition the set of words based on the guessed letters."""
     partitions = defaultdict(set)
     for word in words:
         hint = mask_word(word, guessed)
@@ -34,13 +20,7 @@ def partition(words, guessed):
 
 
 def max_partition(partitions):
-    """
-    Finds the hint for the largest partite set.
-    Args:
-        partitions (dict): partitions from partition function
-    Returns:
-        str: hint for the largest partite set
-    """
+    """Find the hint for the largest partite set."""
     max_size = 0
     candidates = []
 
@@ -53,7 +33,7 @@ def max_partition(partitions):
         elif size == max_size:
             candidates.append((hint, revealed_count))
 
-    # Sort candidates by the fewest revealed letters, then randomly
+    # Sort by fewest revealed letters; break ties randomly
     return (
         sorted(candidates, key=lambda x: (x[1], random.random()))[0][0]
         if candidates
@@ -62,13 +42,7 @@ def max_partition(partitions):
 
 
 def play_hangman(words, word_length, show_details=False):
-    """
-    Main function to play the cheating Hangman game.
-    Args:
-        words (list): List of words from the dictionary
-        word_length (int): Length of the word to guess
-        show_details (bool): Whether to show debugging information
-    """
+    """Play the cheating Hangman game."""
     filtered_words = {word for word in words if len(word) == word_length}
     if not filtered_words:
         print(f"No words of length {word_length} found.")
@@ -99,7 +73,6 @@ def play_hangman(words, word_length, show_details=False):
             print("Partitions:")
             for hint, words in partitions.items():
                 print(f"{hint}: {words}")
-            print(f"Potential words: {filtered_words}")
 
         next_hint = max_partition(partitions)
         filtered_words = partitions[next_hint]
@@ -116,12 +89,8 @@ def play_hangman(words, word_length, show_details=False):
 
 
 def main():
-    """
-    Main function to run the Hangman game.
-    """
-    file_path = (
-        "dictionary.txt"  # Replace with the correct path to your dictionary file
-    )
+    """Run the Hangman game."""
+    file_path = "dictionary.txt"
     try:
         with open(file_path) as f:
             words = [line.strip() for line in f if line.strip()]
@@ -133,9 +102,6 @@ def main():
         print("Invalid input. Please enter an integer.")
     except FileNotFoundError:
         print(f"Dictionary file not found at: {file_path}")
-
-
-main()
 
 
 class TestHangman(unittest.TestCase):
@@ -180,4 +146,10 @@ class TestHangman(unittest.TestCase):
         self.assertIn("You win! The word was wavy.", output)
 
 
-TestHangman()
+user_input = int(input("Select:\n 1 - to run the program\n 2 - to run the test\n"))
+
+if user_input == 1:
+    print("Cheating Hangman!")
+    main()
+else:
+    TestHangman()
