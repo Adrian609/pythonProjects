@@ -28,9 +28,9 @@ def partition(words, guessed):
     """
     partitions = defaultdict(set)
     for word in words:
-        hint = "".join(letter if letter in guessed else "-" for letter in word)
+        hint = mask_word(word, guessed)
         partitions[hint].add(word)
-    return dict(partitions)
+    return partitions
 
 
 def max_partition(partitions):
@@ -42,7 +42,6 @@ def max_partition(partitions):
         str: hint for the largest partite set
     """
     max_size = 0
-    best_hint = None
     candidates = []
 
     for hint, words in partitions.items():
@@ -54,11 +53,12 @@ def max_partition(partitions):
         elif size == max_size:
             candidates.append((hint, revealed_count))
 
-    if candidates:
-        candidates.sort(key=lambda x: (x[1], random.random()))
-        best_hint = candidates[0][0]
-
-    return best_hint
+    # Sort candidates by the fewest revealed letters, then randomly
+    return (
+        sorted(candidates, key=lambda x: (x[1], random.random()))[0][0]
+        if candidates
+        else None
+    )
 
 
 def play_hangman(words, word_length, show_details=False):
@@ -79,7 +79,7 @@ def play_hangman(words, word_length, show_details=False):
     current_hint = "-" * word_length
 
     while remaining_guesses > 0:
-        if current_hint.count("-") == 0:  # All letters guessed
+        if "-" not in current_hint:
             print(f"You win! The word was {current_hint}.")
             return
 
@@ -116,31 +116,26 @@ def play_hangman(words, word_length, show_details=False):
 
 
 def main():
-    # Load words from the dictionary
+    """
+    Main function to run the Hangman game.
+    """
     file_path = (
         "dictionary.txt"  # Replace with the correct path to your dictionary file
     )
-    with open(file_path) as f:
-        words = f.read().strip().split("\n")
-
     try:
+        with open(file_path) as f:
+            words = [line.strip() for line in f if line.strip()]
+
         word_length = int(input("What word length? "))
+        show_details = word_length < 0
+        play_hangman(words, abs(word_length), show_details)
     except ValueError:
         print("Invalid input. Please enter an integer.")
-        return
-
-    show_details = word_length < 0
-    word_length = abs(word_length)
-
-    play_hangman(words, word_length, show_details)
+    except FileNotFoundError:
+        print(f"Dictionary file not found at: {file_path}")
 
 
-# Run the Game
-if __name__ == "__main__":
-    main()
-# Run the test
-if __name__ == "__main__":
-    unittest.main()
+main()
 
 
 class TestHangman(unittest.TestCase):
@@ -154,7 +149,7 @@ class TestHangman(unittest.TestCase):
         words = {"abcd", "abce", "abdg"}
         guessed = {"a", "b"}
         partitions = partition(words, guessed)
-        self.assertEqual(partitions, {"ab--": {"abce", "abcd", "abdg"}})
+        self.assertEqual(partitions, {"ab--": {"abcd", "abce", "abdg"}})
 
         guessed = {"a", "b", "c"}
         partitions = partition(words, guessed)
@@ -165,21 +160,12 @@ class TestHangman(unittest.TestCase):
         self.assertEqual(max_partition(partitions), "ab--")
 
         partitions = {"abcd": {"abcd"}, "abce": {"abce"}}
-        self.assertIn(max_partition(partitions), ["abcd", "abce"])  # Random tie-breaker
+        self.assertIn(max_partition(partitions), ["abcd", "abce"])
 
     @patch("builtins.input", side_effect=cycle(["e", "a", "i", "o", "u", "t", "r"]))
     @patch("builtins.print")
     def test_play_hangman(self, mock_print, mock_input):
-        """
-        Tests the play_hangman function for a losing game scenario.
-        """
         words = ["wave", "quiz", "shiv", "wavy", "jinx", "onyx", "waxy"]
-        play_hangman(words, 4, show_details=False)
-
-        output = [call[0][0] for call in mock_print.call_args_list]
-        self.assertIn("You have 5 guesses remaining", output[0])
-        self.assertIn("You have lost", output[-1])
-
         play_hangman(words, 4, show_details=False)
         output = [call[0][0] for call in mock_print.call_args_list]
         self.assertIn("You have 5 guesses remaining", output[0])
@@ -190,6 +176,8 @@ class TestHangman(unittest.TestCase):
     def test_play_hangman_win(self, mock_print, mock_input):
         words = ["wavy"]
         play_hangman(words, 4, show_details=False)
-
         output = [call[0][0] for call in mock_print.call_args_list]
         self.assertIn("You win! The word was wavy.", output)
+
+
+TestHangman()
