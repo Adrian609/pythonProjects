@@ -121,12 +121,21 @@ class TestHangman(unittest.TestCase):
         partitions = partition(words, guessed)
         self.assertEqual(partitions, {"abc-": {"abcd", "abce"}, "ab--": {"abdg"}})
 
+        guessed = {"a", "b", "c", "d", "e", "g"}
+        partitions = partition(words, guessed)
+        self.assertEqual(
+            partitions, {"abcd": {"abcd"}, "abce": {"abce"}, "abdg": {"abdg"}}
+        )
+
     def test_max_partition(self):
         partitions = {"abc-": {"abcd", "abce"}, "ab--": {"abdg", "abdf"}}
         self.assertEqual(max_partition(partitions), "ab--")
 
         partitions = {"abcd": {"abcd"}, "abce": {"abce"}}
         self.assertIn(max_partition(partitions), ["abcd", "abce"])
+
+        partitions = {"abcd": {"abcd"}}
+        self.assertEqual(max_partition(partitions), "abcd")
 
     @patch("builtins.input", side_effect=cycle(["e", "a", "i", "o", "u", "t", "r"]))
     @patch("builtins.print")
@@ -144,6 +153,14 @@ class TestHangman(unittest.TestCase):
         play_hangman(words, 4, show_details=False)
         output = [call[0][0] for call in mock_print.call_args_list]
         self.assertIn("You win! The word was wavy.", output)
+
+    @patch("builtins.input", side_effect=["x", "x", "a", "b", "c", "d"])
+    @patch("builtins.print")
+    def test_play_hangman_repeated_guesses(self, mock_print, mock_input):
+        words = ["abcd"]
+        play_hangman(words, 4, show_details=False)
+        output = [call[0][0] for call in mock_print.call_args_list]
+        self.assertIn("That letter has already been guessed.", output)
 
 
 user_input = int(input("Select:\n 1 - to run the program\n 2 - to run the test\n"))
