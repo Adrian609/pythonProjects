@@ -164,18 +164,6 @@ def test_max_partition():
     except AssertionError as e:
         print(e)
 
-    @patch("builtins.input", side_effect=cycle(["4", "a", "b", "c", "d"]))
-    @patch("builtins.print")
-    @patch(
-        "builtins.open",
-        new_callable=lambda: unittest.mock.mock_open(read_data="abcd\nbcde\ncdef"),
-    )
-    def test_win_game(self, mock_open, mock_print, mock_input):
-        # Test winning the game with correct guesses
-        play_game()
-        output = [call[0][0] for call in mock_print.call_args_list]
-        self.assertIn("You win! The word was 'abcd'.", output)
-
     @patch("builtins.input", side_effect=cycle(["4", "x", "y", "z", "q", "e"]))
     @patch("builtins.print")
     @patch(
@@ -199,6 +187,18 @@ def test_max_partition():
         play_game()
         output = [call[0][0] for call in mock_print.call_args_list]
         self.assertIn("That letter has already been guessed.", output)
+
+    @patch("builtins.input", side_effect=cycle(["4", "a", "b", "c", "d"]))
+    @patch("builtins.print")
+    @patch(
+        "builtins.open",
+        new_callable=lambda: unittest.mock.mock_open(read_data="abcd\nbcde\ncdef"),
+    )
+    def test_win_game(self, mock_open, mock_print, mock_input):
+        # Test winning the game with correct guesses
+        play_game()
+        output = [call[0][0] for call in mock_print.call_args_list]
+        self.assertIn("You win! The word was 'abcd'.", output)
 
 
 if __name__ == "__main__":
